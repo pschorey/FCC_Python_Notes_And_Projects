@@ -1,4 +1,6 @@
 import numpy as np #import as alias, most people use np
+import pandas as pd
+#import matplotlib.pyplot as plt #very good graphing library...
 
 ##Array Dimensions
 #Scalar or 0d array
@@ -257,3 +259,10 @@ for idx, x in np.ndenumerate(arr):
 (1, 3) 8
 '''
 
+
+#Numpy Math
+a = np.array([1,2,3,4])
+print(a + 2) # [3 4 5 6]
+print('A',a) #A [1 2 3 4] ##doesn't change...remember needs assignent to change
+a = a + 2
+print(a)
