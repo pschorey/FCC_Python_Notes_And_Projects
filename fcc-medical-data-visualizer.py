@@ -22,10 +22,10 @@ def draw_cat_plot():
 
     # Group and reformat the data to split it by 'cardio'. Show the counts of each feature. You will have to rename one of the collumns for the catplot to work correctly.
     df_cat['total'] = 0
-    df_cat = df_cat.groupby(['cardio', 'variable', 'value'], as_index=False).count()
+    df_cat = df_cat.groupby(['cardio', 'variable', 'value'], as_index=False).count() #using groupby idea from: https://repl.it/@JooVictorVict33/fcc-medical-data-visualizer#medical_data_visualizer.py
 
     # Draw the catplot with 'sns.catplot()'
-    sns.catplot(
+    g = sns.catplot(
         data=df_cat, 
         x="variable", 
         y="total", 
@@ -34,6 +34,7 @@ def draw_cat_plot():
         kind="bar",
         legend_out=True,
     )
+    fig = g.fig #From https://forum.freecodecamp.org/t/fcc-medical-data-visualizer/408460/3
 
     # Do not modify the next two lines
     fig.savefig('catplot.png')
@@ -43,22 +44,36 @@ def draw_cat_plot():
 # Draw Heat Map
 def draw_heat_map():
     # Clean the data
-    df_heat = None
+    heightCap = np.percentile(df['height'], 97.5)
+    weightMin = np.percentile(df['weight'], 2.5)
+    weightMax = np.percentile(df['weight'], 97.5)
+    #print(heightCap, weightMin, weightMax)
+    df_heat = df
+    df_heat = df_heat[((df_heat['ap_lo'] <= df_heat['ap_hi']) & (df_heat['height'] >= df_heat['height'].quantile(0.025)))]
+    df_heat = df_heat[(df_heat['height'] <= heightCap)]
+    df_heat = df_heat[((df_heat['weight'] >= weightMin) & (df_heat['weight'] <= weightMax))]
 
+    #no idea why, but fcc wants id to be included with heatmap, I can't make it work unless adding an id arr....
+    df_heat['id'] = range(len(df_heat)) 
+    df_heat= df_heat[['id','age', 'gender', 'height', 'weight', 'ap_hi', 'ap_lo', 'cholesterol', 'gluc', 'smoke', 'alco', 'active', 'cardio', 'overweight']]
+    df_heat = df_heat.astype('float')
+
+    
     # Calculate the correlation matrix
-    corr = None
-
+    #corr = df_heat.corr(method="spearman") -close but slightly wrong ansers, setting vmax and vmin fixed....instead of spearman method
+    corr = df_heat.corr()
     # Generate a mask for the upper triangle
-    mask = None
-
-
+    #from documentation: https://seaborn.pydata.org/generated/seaborn.heatmap.html?highlight=heatmap#seaborn.heatmap
+    mask = np.zeros_like(corr)
+    mask[np.triu_indices_from(mask)] = True
 
     # Set up the matplotlib figure
-    fig, ax = None
-
-    # Draw the heatmap with 'sns.heatmap()'
-
-
+    with sns.axes_style("white"):
+      fig, ax = plt.subplots(figsize=(12, 12))
+      
+      # Draw the heatmap with 'sns.heatmap()'
+      ax = sns.heatmap(corr, square=True, 
+      mask=mask, annot=True, fmt='.1f', vmin='0.0', vmax='0.25')
 
     # Do not modify the next two lines
     fig.savefig('heatmap.png')
