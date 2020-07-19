@@ -80,8 +80,8 @@ def draw_box_plot():
     shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     sns.boxplot(x='year', y='value', data=df_box, ax=ax1)
-    fig.tight_layout()
     sns.boxplot(x='month', y='value', order=shortMonths, data=df_box, ax=ax2)
+    fig.tight_layout()
     ax1.set(xlabel='Year', ylabel='Page Views', title='Year-wise Box Plot (Trend)')
     ax2.set(xlabel='Month', ylabel='Page Views', title='Month-wise Box Plot (Seasonality)')
 
