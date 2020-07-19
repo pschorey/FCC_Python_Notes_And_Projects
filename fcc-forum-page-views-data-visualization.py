@@ -13,10 +13,10 @@ df = df[(df['value'] > df['value'].quantile(.025)) & (df['value'] < df['value'].
 
 def draw_line_plot():
   # Draw line plot
-  '''alternative sns way...
+    '''alternative sns way...
     g = sns.lineplot(data=df)
     fig = g.get_figure()
-  '''  
+    '''  
     fig, ax = plt.subplots()
     plt.plot(df['value'])
     plt.xlabel("Date")
@@ -30,17 +30,46 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = None
+    df_bar = df.copy()
+    df_bar['Years'] = df_bar.index.year
+    df_bar['Months'] = df_bar.index.strftime("%B")
+    df_bar_grouped = df_bar.groupby(['Years','Months'], sort=False, as_index=False)
+    df_bar_grouped = df_bar_grouped['value'].mean()
 
     # Draw bar plot
+    months = ['January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+    ]
 
+    g = sns.catplot(
+        data=df_bar_grouped, 
+        x='Years',
+        y='value',
+        #col='months',
+        hue='Months',
+        hue_order=months,
+        kind='bar',
+        legend_out=False,
+        #legend=False,
+        palette = sns.color_palette()
+    )
 
-
-
+    g.set(xlabel='Years', ylabel='Average Page Views')
+    fig = g.fig
 
     # Save image and return fig (don't change this part)
-    #fig.savefig('bar_plot.png')
-    #return fig
+    fig.savefig('bar_plot.png')
+    return fig
 
 def draw_box_plot():
     # Prepare data for box plots (this part is done!)
