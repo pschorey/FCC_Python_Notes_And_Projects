@@ -10,7 +10,6 @@ df = pd.read_csv('fcc-forum-pageviews.csv', index_col='date', parse_dates=True, 
 #clean: filtering out days when the page views were in the top 2.5% of the dataset or bottom 2.5% of the dataset
 df = df[(df['value'] > df['value'].quantile(.025)) & (df['value'] < df['value'].quantile(.975))]
 
-
 def draw_line_plot():
   # Draw line plot
     '''alternative sns way...
@@ -22,7 +21,6 @@ def draw_line_plot():
     plt.xlabel("Date")
     plt.ylabel("Page Views")
     plt.title("Daily freeCodeCamp Forum Page Views 5/2016-12/2019")
-
 
     # Save image and return fig (don't change this part)
     fig.savefig('line_plot.png')
@@ -79,11 +77,14 @@ def draw_box_plot():
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
     # Draw box plots (using Seaborn)
-
-
-
-
+    shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+    sns.boxplot(x='year', y='value', data=df_box, ax=ax1)
+    fig.tight_layout()
+    sns.boxplot(x='month', y='value', order=shortMonths, data=df_box, ax=ax2)
+    ax1.set(xlabel='Year', ylabel='Page Views', title='Year-wise Box Plot (Trend)')
+    ax2.set(xlabel='Month', ylabel='Page Views', title='Month-wise Box Plot (Seasonality)')
 
     # Save image and return fig (don't change this part)
-    #fig.savefig('box_plot.png')
-    #return fig
+    fig.savefig('box_plot.png')
+    return fig
